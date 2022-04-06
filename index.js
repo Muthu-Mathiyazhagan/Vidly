@@ -3,6 +3,11 @@ const Joi = require("joi");
 const app = express();
 app.use(express.json());
 
+app.use(function (req, res, next) {
+  console.log("Req Url: ", req.url);
+  next();
+});
+
 const genres = [
   { id: 1, name: "Action" },
   { id: 2, name: "Thriller" },
@@ -12,9 +17,9 @@ const genres = [
 const schema = Joi.object({
   name: Joi.string().min(3).required(),
 });
-const { error } = schema.validate({ name: "22" });
+// const { error } = schema.validate({ name: "22" })
 
-console.log(error.details[0].message);
+// console.log(error.details[0].message);
 // Create
 app.post("/api/genres", (req, res) => {
   console.log(req.body.name);
