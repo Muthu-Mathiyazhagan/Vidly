@@ -19,9 +19,7 @@ const genres = [
 const schema = Joi.object({
   name: Joi.string().min(3).required(),
 });
-// const { error } = schema.validate({ name: "22" })
 
-// console.log(error.details[0].message);
 // Create
 app.post("/api/genres", (req, res) => {
   console.log(req.body.name);
