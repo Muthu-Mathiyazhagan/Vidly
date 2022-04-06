@@ -6,6 +6,7 @@ const Joi = require("joi");
 const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(express.static("public"));
 
 app.use(logger);
 
