@@ -1,12 +1,13 @@
 const express = require("express");
+const logger = require("./logger");
+const morgan = require("morgan");
+
 const Joi = require("joi");
 const app = express();
 app.use(express.json());
+app.use(morgan("dev"));
 
-app.use(function (req, res, next) {
-  console.log("Req Url: ", req.url);
-  next();
-});
+app.use(logger);
 
 const genres = [
   { id: 1, name: "Action" },
