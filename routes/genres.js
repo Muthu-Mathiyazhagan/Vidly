@@ -1,29 +1,12 @@
+const { schema, Genre } = require("../models/genre");
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-
 router.use(express.json());
-const Joi = require("joi");
-
-const Genre = mongoose.model(
-  "Genre",
-  new mongoose.Schema({
-    name: {
-      type: String,
-      minlength: 3,
-      maxlength: 50,
-      required: true,
-    },
-  })
-);
-
-const schema = Joi.object({
-  name: Joi.string().min(3).required(),
-});
 
 // Create
 router.post("/", async (req, res) => {
-  console.log(req.body.name);
+  console.log(req.body);
   const { error } = schema.validate(req.body);
   if (error) return res.status(404).send(error.details[0].message);
 
@@ -62,8 +45,8 @@ router.put("/:id", async (req, res) => {
 
   const genre = await Genre.findByIdAndUpdate(
     req.params.id,
-    { name: req.body.name }
-    // { new: 1 }
+    { name: req.body.name },
+    { new: 1 }
   );
 
   if (!genre)
