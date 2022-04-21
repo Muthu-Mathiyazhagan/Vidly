@@ -5,8 +5,8 @@ const mongoose = require("mongoose");
 router.use(express.json());
 const Joi = require("joi");
 
-const Genre = mongoose.model(
-  "Genre",
+const Customer = mongoose.model(
+  "Customer",
   new mongoose.Schema({
     name: {
       type: String,
@@ -14,11 +14,18 @@ const Genre = mongoose.model(
       maxlength: 50,
       required: true,
     },
+    isGold: Boolean,
+    phone: {
+      type: String,
+      minlength: 3,
+    },
   })
 );
 
 const schema = Joi.object({
   name: Joi.string().min(3).required(),
+  isGold: Joi.boolean().required(),
+  phone: Joi.string().required(),
 });
 
 // Create
@@ -27,7 +34,7 @@ router.post("/", async (req, res) => {
   const { error } = schema.validate(req.body);
   if (error) return res.status(404).send(error.details[0].message);
 
-  const genre = await new Genre({
+  const genre = await new Customer({
     name: req.body.name,
   }).save();
 
@@ -36,13 +43,13 @@ router.post("/", async (req, res) => {
 
 //   Read All
 router.get("/", async (req, res) => {
-  res.send(await Genre.find().sort("name").select({ __v: false }));
+  res.send(await Customer.find().sort("name").select({ __v: false }));
 });
 
 //Read Particular
 
 router.get("/:id", async (req, res) => {
-  const genre = await Genre.findById(req.params.id);
+  const genre = await Customer.findById(req.params.id);
 
   console.log("genre: " + genre);
 
@@ -60,7 +67,7 @@ router.put("/:id", async (req, res) => {
   const { error } = schema.validate(req.body);
   if (error) return res.status(404).send(error.details[0].message);
 
-  const genre = await Genre.findByIdAndUpdate(
+  const genre = await Customer.findByIdAndUpdate(
     req.params.id,
     { name: req.body.name }
     // { new: 1 }
@@ -76,7 +83,7 @@ router.put("/:id", async (req, res) => {
 
 // Delete
 router.delete("/:id", async (req, res) => {
-  const genre = await Genre.findByIdAndRemove(req.params.id);
+  const genre = await Customer.findByIdAndRemove(req.params.id);
 
   // const genre = genres.find((c) => c.id == req.params.id);
 
