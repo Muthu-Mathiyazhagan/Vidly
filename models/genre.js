@@ -18,4 +18,5 @@ const schema = Joi.object({
 
 exports.schema = schema;
 exports.Genre = Genre;
+
 exports.genreSchema = genreSchema;
