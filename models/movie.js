@@ -32,8 +32,7 @@ const Movie = mongoose.model(
 
 const schema = Joi.object({
   title: Joi.string().min(3).required(),
-  //   genre: Joi.boolean(),
-
+  genreId: Joi.string().required(),
   numberInStock: Joi.number().required().min(0).max(500),
   dailyRentalRate: Joi.number().required().min(0).max(500),
 });

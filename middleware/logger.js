@@ -1,5 +1,5 @@
 function log(req, res, next) {
-  console.log("From Custom Middleware Logger function Req Url: ", req.url);
+  // console.log("From Custom Middleware Logger function Req Url: ", req.url);
   // res.send("test").status(200);
   next();
 }
