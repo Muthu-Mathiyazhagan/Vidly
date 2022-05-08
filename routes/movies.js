@@ -11,13 +11,13 @@ router.post("/", async (req, res) => {
   const { error } = schema.validate(req.body);
   if (error) return res.status(404).send(error.details[0].message);
 
-  const genre = await Genre.findById(req.params.genreId);
+  const genre = await Genre.findById(req.body.genreId);
 
   if (!genre)
     return res
       .status(404)
       .send(
-        `The Given GenreID  (${req.params.genreId}) was not Found.! || Invalid Genre`
+        `The Given GenreID  (${req.body.genreId}) was not Found.! || Invalid Genre`
       );
 
   const movie = await new Movie({
@@ -56,16 +56,17 @@ router.get("/:id", async (req, res) => {
 //Update
 
 router.put("/:id", async (req, res) => {
+  console.log("Req", req.body);
   const { error } = schema.validate(req.body);
   if (error) return res.status(404).send(error.details[0].message);
 
-  const genre = await Genre.findById(req.params.genreId);
+  const genre = await Genre.findById(req.body.genreId);
 
   if (!genre)
     return res
       .status(404)
       .send(
-        `The Given GenreID  (${req.params.genreId}) was not Found.! || Invalid Genre`
+        `The Given GenreID  (${req.body.genreId}) was not Found.! || Invalid Genre`
       );
 
   const movie = await Movie.findByIdAndUpdate(
@@ -104,7 +105,7 @@ router.delete("/:id", async (req, res) => {
   res
     .status(200)
     .send(
-      `The given id(${req.params.id}) has deleted Successfully \n movie : ${movie}`
+      `The Movie title : (${movie.title}) has deleted Successfully \n movie : ${movie}`
     );
 });
 
