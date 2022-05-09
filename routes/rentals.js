@@ -1,0 +1,121 @@
+const { schema, Rental } = require("../models/rental");
+const { Movie } = require("../models/movie");
+const { Customer } = require("../models/customer");
+const express = require("express");
+const router = express.Router();
+const mongoose = require("mongoose");
+router.use(express.json());
+
+// CRUD Operations below
+
+//   Read All
+router.get("/", async (req, res) => {
+  res.send(await Rental.find().sort("-dateOut").select({ __v: false }));
+});
+
+// Create
+router.post("/", async (req, res) => {
+  console.log(req.body);
+  const { error } = schema.validate(req.body);
+  if (error) return res.status(404).send(error.details[0].message);
+
+  const customer = await Customer.findById(req.body.customerId);
+  if (!customer) return res.status(404).send(`Invalid customer`);
+
+  const movie = await Movie.findById(req.body.movieId);
+  if (!movie) return res.status(404).send(` Invalid Movie`);
+
+  if (movie.numberInStock == 0)
+    return res.status(404).send(`Movie not in stock`);
+
+  const rental = await new Rental({
+    customer: {
+      _id: customer._id,
+      name: customer.name,
+      phone: customer.phone,
+    },
+    movie: {
+      _id: movie._id,
+      name: movie.name,
+      dailyRentalRate: movie.dailyRentalRate,
+    },
+  }).save();
+
+  movie.numberInStock--;
+  movie.save();
+
+  res.status(200).send(rental);
+});
+
+//Read Particular
+router.get("/:id", async (req, res) => {
+  const rental = await Rental.findById(req.params.id);
+
+  console.log("Rental: " + rental);
+
+  if (!rental)
+    return res
+      .status(404)
+      .send(`The Given Id (${req.params.id}) was not Found.!`);
+
+  res.send(rental);
+});
+
+//Update
+
+router.put("/:id", async (req, res) => {
+  return res
+    .status(404)
+    .send(
+      "We are not supporting Update Rental Data from Outside. Update dont make sense now 09 May 2022 ; "
+    );
+
+  console.log("Req", req.body);
+  const { error } = schema.validate(req.body);
+  if (error) return res.status(404).send(error.details[0].message);
+
+  const customer = await Customer.findById(req.body.customerId);
+  if (!customer) return res.status(404).send(`Invalid customer`);
+
+  const movie = await Movie.findById(req.body.movieId);
+  if (!movie) return res.status(404).send(` Invalid Movie`);
+
+  const rental = await Rental.findByIdAndUpdate(
+    req.params.id,
+    {
+      customer: {
+        _id: customer._id,
+        name: customer.name,
+        phone: customer.phone,
+      },
+      movie: {
+        _id: movie._id,
+        name: movie.name,
+        dailyRentalRate: movie.dailyRentalRate,
+      },
+    },
+    { new: 1 }
+  );
+
+  res.status(202).send(rental);
+});
+
+// Delete
+router.delete("/:id", async (req, res) => {
+  const rental = await Rental.findByIdAndRemove(req.params.id);
+
+  // const movie = movies.find((c) => c.id == req.params.id);
+
+  if (!rental)
+    return res
+      .status(404)
+      .send(`The Given Id (${req.params.id}) was not Found.!`);
+
+  res
+    .status(200)
+    .send(
+      `The Rental id : (${rental._id}) has deleted Successfully \n Deleted Rental : ${rental}`
+    );
+});
+
+module.exports = router;
