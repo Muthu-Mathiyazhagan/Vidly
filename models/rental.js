@@ -23,6 +23,7 @@ const Rental = mongoose.model(
           maxlength: 50,
         },
       }),
+      required: true,
     },
     movie: {
       type: new mongoose.Schema({
@@ -52,6 +53,7 @@ const Rental = mongoose.model(
           min: 0,
         },
       }),
+      required: true,
     },
   })
 );

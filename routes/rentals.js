@@ -3,8 +3,11 @@ const { Movie } = require("../models/movie");
 const { Customer } = require("../models/customer");
 const express = require("express");
 const router = express.Router();
+// const Fawn = require("fawn");
 const mongoose = require("mongoose");
 router.use(express.json());
+
+// Fawn.init(mongoose);
 
 // CRUD Operations below
 
@@ -36,13 +39,31 @@ router.post("/", async (req, res) => {
     },
     movie: {
       _id: movie._id,
-      name: movie.name,
+      title: movie.title,
       dailyRentalRate: movie.dailyRentalRate,
     },
-  }).save();
+  });
 
-  movie.numberInStock--;
-  movie.save();
+    rental.save();
+    movie.numberInStock--;
+    movie.save();
+
+    // handling Transaction with Fawn // But Failed
+
+//   try {
+//     new Fawn.Task()
+//       .save("rentals", rental)
+//       .update(
+//         "movies",
+//         { _id: movie._id },
+//         {
+//           $inc: { numberInStock: -1 },
+//         }
+//       )
+//       .run();
+//   } catch (error) {
+//     res.status(500).send("Something went wrong");
+//   }
 
   res.status(200).send(rental);
 });
@@ -59,6 +80,24 @@ router.get("/:id", async (req, res) => {
       .send(`The Given Id (${req.params.id}) was not Found.!`);
 
   res.send(rental);
+});
+
+// Delete
+router.delete("/:id", async (req, res) => {
+  const rental = await Rental.findByIdAndRemove(req.params.id);
+
+  // const movie = movies.find((c) => c.id == req.params.id);
+
+  if (!rental)
+    return res
+      .status(404)
+      .send(`The Given Id (${req.params.id}) was not Found.!`);
+
+  res
+    .status(200)
+    .send(
+      `The Rental id : (${rental._id}) has deleted Successfully \n Deleted Rental : ${rental}`
+    );
 });
 
 //Update
@@ -98,24 +137,6 @@ router.put("/:id", async (req, res) => {
   );
 
   res.status(202).send(rental);
-});
-
-// Delete
-router.delete("/:id", async (req, res) => {
-  const rental = await Rental.findByIdAndRemove(req.params.id);
-
-  // const movie = movies.find((c) => c.id == req.params.id);
-
-  if (!rental)
-    return res
-      .status(404)
-      .send(`The Given Id (${req.params.id}) was not Found.!`);
-
-  res
-    .status(200)
-    .send(
-      `The Rental id : (${rental._id}) has deleted Successfully \n Deleted Rental : ${rental}`
-    );
 });
 
 module.exports = router;
