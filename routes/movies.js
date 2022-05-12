@@ -41,6 +41,12 @@ router.get("/", async (req, res) => {
 //Read Particular
 
 router.get("/:id", async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id))
+    return res
+      .status(404)
+      .send(
+        `"genreId" with value "${req.params.id}" fails to match the valid mongo id pattern`
+      );
   const movie = await Movie.findById(req.params.id);
 
   console.log("movie: " + movie);
@@ -59,6 +65,13 @@ router.put("/:id", async (req, res) => {
   console.log("Req", req.body);
   const { error } = schema.validate(req.body);
   if (error) return res.status(404).send(error.details[0].message);
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id))
+    return res
+      .status(404)
+      .send(
+        `"movieId" with value "${req.params.id}" fails to match the valid mongo id pattern`
+      );
 
   const genre = await Genre.findById(req.body.genreId);
 
@@ -93,6 +106,12 @@ router.put("/:id", async (req, res) => {
 
 // Delete
 router.delete("/:id", async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id))
+    return res
+      .status(404)
+      .send(
+        `"genreId" with value "${req.params.id}" fails to match the valid mongo id pattern`
+      );
   const movie = await Movie.findByIdAndRemove(req.params.id);
 
   // const movie = movies.find((c) => c.id == req.params.id);

@@ -27,6 +27,12 @@ router.get("/", async (req, res) => {
 //Read Particular
 
 router.get("/:id", async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id))
+    return res
+      .status(404)
+      .send(
+        `"customerId" with value "${req.params.id}" fails to match the valid mongo id pattern`
+      );
   const customer = await Customer.findById(req.params.id);
 
   if (!customer)
@@ -42,6 +48,18 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   const { error } = schema.validate(req.body);
   if (error) return res.status(404).send(error.details[0].message);
+
+  // Below logic does not work . May be need to handle this error in Express.Router Leve; (I Guess :)  ;
+  // if (req.params.id == "") {
+  //   return res.status(400).send(`Customer id in URL is required`);
+  // }
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id))
+    return res
+      .status(404)
+      .send(
+        `"customerId" with value "${req.params.id}" fails to match the valid mongo id pattern`
+      );
 
   const customer = await Customer.findByIdAndUpdate(
     req.params.id,
@@ -59,6 +77,12 @@ router.put("/:id", async (req, res) => {
 
 // Delete
 router.delete("/:id", async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id))
+    return res
+      .status(404)
+      .send(
+        `"customerId" with value "${req.params.id}" fails to match the valid mongo id pattern`
+      );
   const customer = await Customer.findByIdAndRemove(req.params.id);
 
   // const genre = genres.find((c) => c.id == req.params.id);

@@ -10,10 +10,7 @@ const Customer = mongoose.model(
       maxlength: 50,
       required: true,
     },
-    isGold: {
-      type: Boolean,
-      default: false,
-    },
+    isGold: Boolean,
     phone: {
       type: String,
       minlength: 3,

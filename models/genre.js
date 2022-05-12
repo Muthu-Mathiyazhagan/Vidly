@@ -13,7 +13,7 @@ const genreSchema = new mongoose.Schema({
 const Genre = mongoose.model("Genre", genreSchema);
 
 const schema = Joi.object({
-  name: Joi.string().min(3).required().trim(),
+  name: Joi.string().min(3).required(),
 });
 
 exports.schema = schema;

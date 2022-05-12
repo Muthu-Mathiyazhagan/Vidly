@@ -19,12 +19,19 @@ router.post("/", async (req, res) => {
 
 //   Read All
 router.get("/", async (req, res) => {
+  
   res.send(await Genre.find().sort("name").select({ __v: false }));
 });
 
 //Read Particular
 
 router.get("/:id", async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id))
+    return res
+      .status(404)
+      .send(
+        `"genreId" with value "${req.params.id}" fails to match the valid mongo id pattern`
+      );
   const genre = await Genre.findById(req.params.id);
 
   console.log("genre: " + genre);
@@ -43,6 +50,13 @@ router.put("/:id", async (req, res) => {
   const { error } = schema.validate(req.body);
   if (error) return res.status(404).send(error.details[0].message);
 
+  if (!mongoose.Types.ObjectId.isValid(req.params.id))
+    return res
+      .status(404)
+      .send(
+        `"genreId" with value "${req.params.id}" fails to match the valid mongo id pattern`
+      );
+
   const genre = await Genre.findByIdAndUpdate(
     req.params.id,
     { name: req.body.name },
@@ -59,6 +73,12 @@ router.put("/:id", async (req, res) => {
 
 // Delete
 router.delete("/:id", async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id))
+    return res
+      .status(404)
+      .send(
+        `"genreId" with value "${req.params.id}" fails to match the valid mongo id pattern`
+      );
   const genre = await Genre.findByIdAndRemove(req.params.id);
 
   // const genre = genres.find((c) => c.id == req.params.id);
