@@ -14,6 +14,7 @@ const Customer = mongoose.model(
     phone: {
       type: String,
       minlength: 3,
+      unique: true,
     },
   })
 );

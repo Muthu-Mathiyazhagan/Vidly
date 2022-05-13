@@ -1,4 +1,5 @@
 const _ = require("lodash");
+const auth = require("../middleware/auth");
 const bcrypt = require("bcrypt");
 const express = require("express");
 const router = express.Router();
@@ -8,7 +9,7 @@ const { schema, User } = require("../models/user");
 router.use(express.json());
 
 //Create a new user
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error } = schema.validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 

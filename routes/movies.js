@@ -1,12 +1,13 @@
 const { schema, Movie } = require("../models/movie");
 const { Genre } = require("../models/genre");
 const express = require("express");
+const auth = require("../middleware/auth");
 const router = express.Router();
 const mongoose = require("mongoose");
 router.use(express.json());
 
 // Create
-router.post("/", async (req, res) => {
+router.post("/", auth,async (req, res) => {
   console.log(req.body);
   const { error } = schema.validate(req.body);
   if (error) return res.status(404).send(error.details[0].message);
@@ -61,7 +62,7 @@ router.get("/:id", async (req, res) => {
 
 //Update
 
-router.put("/:id", async (req, res) => {
+router.put("/:id",auth, async (req, res) => {
   console.log("Req", req.body);
   const { error } = schema.validate(req.body);
   if (error) return res.status(404).send(error.details[0].message);
@@ -105,7 +106,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",auth, async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res
       .status(404)
