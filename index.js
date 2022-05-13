@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const express = require("express");
+const config = require("config");
 const logger = require("./middleware/logger");
 const genres = require("./routes/genres");
 const customers = require("./routes/customers");
@@ -20,6 +21,13 @@ app.use("/api/movies", movies);
 app.use("/api/rentals", rentals);
 app.use("/api/users", users);
 app.use("/api/auth", auth);
+
+if (!config.get("jwtPrivateKey")) {
+  console.error(
+    "FATAL ERROR: JWT private key not defined in environment variable of the Machine"
+  );
+  process.exit(1);
+}
 
 mongoose.connect("mongodb://localhost/vidly").then(() => {
   console.log("Connected to MongoDB");

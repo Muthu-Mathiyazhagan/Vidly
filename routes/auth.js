@@ -1,6 +1,4 @@
 const Joi = require("joi");
-const jwt = require("jsonwebtoken");
-const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const express = require("express");
 const router = express.Router();
@@ -21,12 +19,14 @@ router.post("/", async (req, res) => {
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword) return res.status(400).send(`Invalid email or password`);
 
-  const token = jwt.sign(
-    {
-      id: user._id,
-    },
-    "jwtPrivateKey"
-  );
+  const token = user.generateAuthToken();
+
+  // const token = jwt.sign(
+  //   {
+  //     id: user._id,
+  //   },
+  //   config.get("jwtPrivateKey")
+  // );
 
   res.status(200).send(token);
 });
