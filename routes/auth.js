@@ -23,7 +23,7 @@ router.post("/", async (req, res) => {
 
   // const token = jwt.sign(
   //   {
-  //     id: user._id,
+  //     _id: user._id,
   //   },
   //   config.get("jwtPrivateKey")
   // );

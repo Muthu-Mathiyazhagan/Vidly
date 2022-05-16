@@ -12,7 +12,7 @@ router.use(express.json());
 //Get Current User
 router.get("/me", auth, async (req, res) => {
   console.log("User", req.user);
-  let user = await User.findOne({ _id: req.user.id }).select("-password");
+  let user = await User.findById(req.user._id).select("name email -_id");
   console.log("user", user);
   if (!user) {
     return res.status(404).send(`user not found`);
@@ -22,7 +22,7 @@ router.get("/me", auth, async (req, res) => {
 
 //Send All Users
 router.get("/", async (req, res) => {
-  let user = await User.find().select("-password");
+  let user = await User.find().select("name email -_id");
   console.log("user", user.length);
   if (!user) {
     return res.status(404).send(`no user found`);
