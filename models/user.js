@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
     maxlength: 255,
     required: true,
   },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 userSchema.methods.generateAuthToken = function () {
@@ -50,6 +54,8 @@ const schema = Joi.object({
     .minOfNumeric(1)
     .noWhiteSpaces()
     .required(),
+
+  isAdmin: Joi.boolean(),
 });
 
 exports.schema = schema;
