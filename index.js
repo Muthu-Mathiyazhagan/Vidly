@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const express = require("express");
-const config = require("config");
+// const config = require("config");
+require("dotenv").config();
+
 const genres = require("./routes/genres");
 const customers = require("./routes/customers");
 const movies = require("./routes/movies");
@@ -20,18 +22,20 @@ app.use("/api/rentals", rentals);
 app.use("/api/users", users);
 app.use("/api/auth", auth);
 
-if (!config.get("jwtPrivateKey")) {
+if (!process.env.vidly_jwtPrivateKey) {
   console.error(
     "FATAL ERROR: JWT private key not defined in environment variable of the Machine"
   );
   process.exit(1);
 }
 
+console.log(process.env.vidly_jwtPrivateKey);
+
 mongoose.connect("mongodb://localhost/vidly").then(() => {
   console.log("Connected to MongoDB");
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.VIDLY_PORT || 3000;
 app.listen(port, () => console.log(`Listening  On http://localhost:${port}`));
 
 async function DeleteAll(CollectionName) {
