@@ -1,28 +1,37 @@
 const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
+const asyncMiddleware = require("../middleware/async");
 const { schema, Genre } = require("../models/genre");
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 router.use(express.json());
 
-// Create
-router.post("/", auth, async (req, res) => {
-  console.log(req.body);
-  const { error } = schema.validate(req.body);
-  if (error) return res.status(404).send(error.details[0].message);
-
-  const genre = await new Genre({
-    name: req.body.name,
-  }).save();
-
-  res.status(200).send(genre);
-});
-
 //   Read All
-router.get("/", async (req, res) => {
-  res.send(await Genre.find().sort("name").select({ __v: false }));
-});
+router.get(
+  "/",
+  asyncMiddleware(async (req, res) => {
+    const genres = await Genre.find().sort("name").select({ __v: false });
+    return res.send(genres);
+  })
+);
+
+// Create
+router.post(
+  "/",
+  auth,
+  asyncMiddleware(async (req, res, next) => {
+    console.log(req.body);
+    const { error } = schema.validate(req.body);
+    if (error) return res.status(404).send(error.details[0].message);
+
+    const genre = await new Genre({
+      name: req.body.name,
+    }).save();
+
+    res.status(200).send(genre);
+  })
+);
 
 //Read Particular
 

@@ -6,19 +6,24 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const { schema, User } = require("../models/user");
 const admin = require("../middleware/admin");
+const asyncMiddleware = require("../middleware/async");
 
 router.use(express.json());
 
 //Get Current User
-router.get("/me", auth, async (req, res) => {
-  console.log("User", req.user);
-  let user = await User.findById(req.user._id).select("name email -_id");
-  console.log("user", user);
-  if (!user) {
-    return res.status(404).send(`user not found`);
-  }
-  return res.status(200).send(user);
-});
+router.get(
+  "/me",
+  auth,
+  asyncMiddleware(async (req, res) => {
+    console.log("User", req.user);
+    let user = await User.findById(req.user._id).select("name email -_id");
+    console.log("user", user);
+    if (!user) {
+      return res.status(404).send(`user not found`);
+    }
+    return res.status(200).send(user);
+  })
+);
 
 //Send All Users
 router.get("/", async (req, res) => {
