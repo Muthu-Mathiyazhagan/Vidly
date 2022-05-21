@@ -91,7 +91,7 @@ router.delete("/:id", [auth, admin], async (req, res) => {
       );
   const genre = await Genre.findByIdAndRemove(req.params.id);
 
-  // const genre = genres.find((c) => c.id == req.params.id);
+  // const genre = genres.find((c) => c.id == req.params.id); // another way of find
 
   if (!genre)
     return res
