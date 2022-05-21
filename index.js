@@ -48,7 +48,7 @@ mongoose
       DbStatus[mongoose.connection.readyState]
     );
   });
-const port = process.env.VIDLY_PORT || 3000;
+const port = process.env.VIDLY_PORT || 3000; //Get the PORT value from env file
 app.listen(port, () => console.log(`Listening  On http://localhost:${port}`));
 
 async function DeleteAll(CollectionName) {
