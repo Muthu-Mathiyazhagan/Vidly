@@ -49,10 +49,10 @@ const schema = Joi.object({
     .string()
     .min(5)
     .minOfSpecialCharacters(1)
-    .minOfLowercase(1)
-    .minOfUppercase(1)
-    .minOfNumeric(1)
-    .noWhiteSpaces()
+    // .minOfLowercase(1)
+    // .minOfUppercase(1)
+    // .minOfNumeric(1)
+    // .noWhiteSpaces()
     .required(),
 
   isAdmin: Joi.boolean(),

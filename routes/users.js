@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const { schema, User } = require("../models/user");
 const admin = require("../middleware/admin");
 const asyncMiddleware = require("../middleware/async");
+const { result } = require("lodash");
 
 router.use(express.json());
 
@@ -26,8 +27,8 @@ router.get(
 );
 
 //Send All Users
-router.get("/", async (req, res) => {
-  let user = await User.find().select("name email -_id");
+router.get("/", auth, async (req, res) => {
+  let user = await User.find().select("name email _id");
   console.log("user", user.length);
   if (!user) {
     return res.status(404).send(`no user found`);
@@ -37,6 +38,7 @@ router.get("/", async (req, res) => {
 
 //Create a new user
 router.post("/", auth, async (req, res) => {
+  console.log("New User Called");
   const { error } = schema.validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -56,5 +58,33 @@ router.post("/", auth, async (req, res) => {
     .status(200)
     .send(_.pick(user, ["_id", "name", "email"]));
 });
+
+
+// Delete a user
+router.delete("/:id", [auth, admin], async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id))
+    return res
+      .status(404)
+      .send(
+        `"genreId" with value "${req.params.id}" fails to match the valid mongo id pattern`
+      );
+  const user = await User.findByIdAndRemove(req.params.id);
+
+  // const movie = movies.find((c) => c.id == req.params.id);
+
+  if (!user)
+    return res
+      .status(404)
+      .send(`The Given Id (${req.params.id}) was not Found.!`);
+
+  res
+    .status(200)
+    .send(
+      `The User Name : (${user.name}) has deleted Successfully \n user : ${user}`
+    );
+});
+
+
+
 
 module.exports = router;
