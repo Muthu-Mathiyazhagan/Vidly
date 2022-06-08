@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const express = require("express");
-// const config = require("config");
+const config = require("config");
 require("dotenv").config();
 const DbStatus = ["Disconnected", "Connected", "connecting", "disconnecting"];
 
@@ -33,6 +33,7 @@ if (!process.env.vidly_jwtPrivateKey) {
 }
 
 console.log(process.env.vidly_jwtPrivateKey);
+console.log(config.get("VIDLY_PORT"));
 
 mongoose
   .connect("mongodb://localhost/vidly")
@@ -48,7 +49,7 @@ mongoose
       DbStatus[mongoose.connection.readyState]
     );
   });
-const port = process.env.VIDLY_PORT || 3000; //Get the PORT value from env file
+const port = config.get('VIDLY_PORT') || 3000; //Get the PORT value from env file
 app.listen(port, () => console.log(`Listening  On http://localhost:${port}`));
 
 async function DeleteAll(CollectionName) {
