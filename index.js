@@ -1,4 +1,7 @@
 require('express-async-errors');
+const winston = require('winston');
+require('winston-mongodb');
+
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const express = require("express");
@@ -26,6 +29,26 @@ app.use("/api/users", users);
 app.use("/api/auth", auth);
 app.use(error);
 
+winston.add(winston.transports.File,{filename : 'logfile.log'});
+winston.add(winston.transports.MongoDB,{db: config.get('dbUri')});
+
+// const logger = winston.createLogger({
+//   level: 'info',
+//   format: winston.format.json(),
+//   defaultMeta: { service: 'user-service' },
+//   transports: [
+//     //
+//     // - Write all logs with importance level of `error` or less to `error.log`
+//     // - Write all logs with importance level of `info` or less to `combined.log`
+//     //
+//     new winston.transports.File({ filename: 'error.log', level: 'error' }),
+//     new winston.transports.File({ filename: 'combined.log' }),
+//   ],
+// });
+
+// winston.add(new winston.transports.MongoDB({db: config.get('dbUri')}));
+
+
 if (!process.env.vidly_jwtPrivateKey) {
   console.error(
     "FATAL ERROR: JWT private key not defined in environment variable of the Machine"
@@ -37,7 +60,7 @@ console.log(process.env.vidly_jwtPrivateKey);
 console.log(config.get("VIDLY_PORT"));
 
 mongoose
-  .connect("mongodb://localhost/vidly")
+  .connect(config.get('dbUri'))
   .then(() => {
     console.log(
       "Mongo DB Conection Status : ",

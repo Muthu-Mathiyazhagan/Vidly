@@ -5,12 +5,15 @@ const { schema, Genre } = require("../models/genre");
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const winston = require("winston");
+const { result } = require("lodash");
 router.use(express.json());
 
 //   Read All
 router.get("/", async (req, res) => {
+  // throw new Error("Could not get Genres at the moment,!");
   const genres = await Genre.find().sort("name").select({ __v: false });
-  return res.send(genres);
+  return res.status(200).send(genres);
 });
 
 // Create
@@ -18,6 +21,10 @@ router.post("/", auth, async (req, res, next) => {
   console.log(req.body);
   const { error } = schema.validate(req.body);
   if (error) return res.status(404).send(error.details[0].message);
+
+  if (await Genre.findOne({ name: req.body.name })) {
+    return res.status(409).send("Conflict : Genre Name already Exist.!");
+  }
 
   const genre = await new Genre({
     name: req.body.name,

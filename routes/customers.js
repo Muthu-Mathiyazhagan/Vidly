@@ -14,7 +14,7 @@ router.post("/", auth, async (req, res) => {
   let customer = await Customer.findOne({ phone: req.body.phone });
   if (customer)
     return res
-      .status(400)
+      .status(409)
       .send(`User Already Registered.! "${customer.phone}"`);
 
   res.status(200).send(
