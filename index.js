@@ -1,3 +1,4 @@
+require('express-async-errors');
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const express = require("express");

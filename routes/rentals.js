@@ -6,6 +6,7 @@ const express = require("express");
 const router = express.Router();
 // const Fawn = require("fawn");
 const mongoose = require("mongoose");
+const admin = require("../middleware/admin");
 router.use(express.json());
 
 // Fawn.init(mongoose);
@@ -115,7 +116,7 @@ router.delete("/:id",auth, async (req, res) => {
 
 //Update
 
-router.put("/:id",auth, async (req, res) => {
+router.put("/:id",[auth,admin], async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res
       .status(404)
@@ -123,7 +124,7 @@ router.put("/:id",auth, async (req, res) => {
         `"rentalId" with value "${req.params.id}" fails to match the valid mongo id pattern`
       );
   return res
-    .status(404)
+    .status(405)
     .send(
       "hahaha .!. \n We are not supporting Update Rental Data from Outside. Update API for rentals dont make sense now 09 May 2022 ; "
     );

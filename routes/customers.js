@@ -56,7 +56,7 @@ router.put("/:id", auth, async (req, res) => {
   const { error } = schema.validate(req.body);
   if (error) return res.status(404).send(error.details[0].message);
 
-  // Below logic does not work . May be need to handle this error in Express.Router Leve; (I Guess :)  ;
+  // Below logic does not work . May be need to handle this error in Express.Router Level; (I Guess :)  ;
   // if (req.params.id == "") {
   //   return res.status(400).send(`Customer id in URL is required`);
   // }
