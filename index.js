@@ -3,34 +3,23 @@ const winston = require('winston');
 require('winston-mongodb');
 
 const mongoose = require("mongoose");
-const morgan = require("morgan");
 const express = require("express");
 const config = require("config");
 require("dotenv").config();
 const DbStatus = ["Disconnected", "Connected", "connecting", "disconnecting"];
 
-const genres = require("./routes/genres");
-const customers = require("./routes/customers");
-const movies = require("./routes/movies");
-const rentals = require("./routes/rentals");
-const users = require("./routes/users");
-const auth = require("./routes/auth");
-const error = require("./middleware/error");
 
 const app = express();
-app.use(express.json());
-app.use(morgan("dev"));
-app.use(express.static("public"));
-app.use("/api/genres", genres);
-app.use("/api/customers", customers);
-app.use("/api/movies", movies);
-app.use("/api/rentals", rentals);
-app.use("/api/users", users);
-app.use("/api/auth", auth);
-app.use(error);
+
+require('./startup/routes')(app);
 
 winston.add(winston.transports.File, { filename: 'logfile.log' });
-winston.add(winston.transports.MongoDB, { db: config.get('dbUri') });
+winston.add(winston.transports.MongoDB, {
+  db: process.env.dbUri,
+  level: 'info'
+});
+
+
 
 process.on('uncaughtException', (ex) => {
   console.log("WE GOT AN UNCAUGHT EXCEPTION");
@@ -57,10 +46,10 @@ if (!process.env.vidly_jwtPrivateKey) {
 }
 
 console.log(process.env.vidly_jwtPrivateKey);
-console.log(config.get("VIDLY_PORT"));
+console.log(process.env.VIDLY_PORT);
 
 mongoose
-  .connect(config.get('dbUri'))
+  .connect(process.env.dbUri)
   .then(() => {
     console.log(
       "Mongo DB Conection Status : ",
@@ -73,7 +62,7 @@ mongoose
       DbStatus[mongoose.connection.readyState]
     );
   });
-const port = config.get('VIDLY_PORT') || 3000; //Get the PORT value from env file
+const port = process.env.VIDLY_PORT || 3000; //Get the PORT value from env file
 app.listen(port, () => console.log(`Listening  On http://localhost:${port}`));
 
 async function DeleteAll(CollectionName) {
