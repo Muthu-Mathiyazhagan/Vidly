@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const winston = require('winston');
 const DbStatus = ["Disconnected", "Connected", "connecting", "disconnecting"];
 
 
@@ -6,15 +7,10 @@ module.exports = function () {
     mongoose
         .connect(process.env.dbUri)
         .then(() => {
-            console.log(
+            winston.info(
                 "Mongo DB Conection Status : ",
                 DbStatus[mongoose.connection.readyState]
             );
         })
-        .catch(() => {
-            console.log(
-                "Mongo DB Conection Status : ",
-                DbStatus[mongoose.connection.readyState]
-            );
-        });
+
 }
