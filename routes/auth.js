@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
   //     _id: user._id,
   //   },
   //   config.get("jwtPrivateKey")
-  // );
+  // ); 
 
   res.status(200).send(token);
 });

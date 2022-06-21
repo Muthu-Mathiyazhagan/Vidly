@@ -38,7 +38,8 @@ router.get("/", auth, async (req, res) => {
 
 //Create a new user
 router.post("/", auth, async (req, res) => {
-  console.log("New User Called");
+
+
   const { error } = schema.validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -52,7 +53,7 @@ router.post("/", auth, async (req, res) => {
   await user.save();
 
   const token = user.generateAuthToken();
-
+  
   res
     .header("x-auth-token", token)
     .status(200)
