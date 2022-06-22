@@ -1,4 +1,4 @@
-const error = require("../middleware/errory");
+const error = require("../middleware/error");
 const morgan = require("morgan");
 const express = require("express");
 

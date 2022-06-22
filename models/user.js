@@ -31,13 +31,31 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.methods.generateAuthToken = function () {
-  return jwt.sign(
+
+  const accessToken = jwt.sign(
     {
       _id: this._id,
+
       isAdmin: this.isAdmin,
+      type: "access"
     },
-    config.get("jwtPrivateKey")
+    process.env.vidly_jwtPrivateKey, { expiresIn: 60 }
   );
+
+
+  const refreshToken = jwt.sign(
+    {
+      _id: this._id,
+
+      isAdmin: this.isAdmin,
+
+      type: "refresh"
+
+    },
+    process.env.vidly_jwtPrivateKey, { expiresIn: 360 }
+  );
+
+  return [accessToken, refreshToken];
 };
 
 const User = mongoose.model("User", userSchema);

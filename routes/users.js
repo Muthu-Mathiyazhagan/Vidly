@@ -52,10 +52,12 @@ router.post("/", auth, async (req, res) => {
   user.password = await bcrypt.hash(user.password, salt);
   await user.save();
 
-  const token = user.generateAuthToken();
+  const token = await user.generateAuthToken();
+  console.log("Token : ".token);
   
   res
-    .header("x-auth-token", token)
+    .header("x-auth-access-token", token[0])
+    .header("x-auth-refresh-token", token[1])
     .status(200)
     .send(_.pick(user, ["_id", "name", "email"]));
 });
