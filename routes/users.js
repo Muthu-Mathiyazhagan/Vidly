@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const _ = require("lodash");
 const auth = require("../middleware/auth");
 const bcrypt = require("bcrypt");
@@ -8,6 +9,7 @@ const { schema, User } = require("../models/user");
 const admin = require("../middleware/admin");
 const asyncMiddleware = require("../middleware/async");
 const { result } = require("lodash");
+require("dotenv").config();
 
 router.use(express.json());
 
@@ -36,6 +38,36 @@ router.get("/", auth, async (req, res) => {
   return res.status(200).send(user);
 });
 
+//generate Auth Tokens
+router.post("/create-user-token", async (req, res) => {
+  const token = req.header("x-auth-token");
+  if (!token) return res.status(401).send(`Access denied. No Token Provided`);
+  try {
+    req.user = jwt.verify(token, process.env.vidly_jwtPrivateKey);
+
+    const newToken = await user.generateAuthToken();
+
+    return res
+      .header("x-auth-access-token", newToken[0])
+      .header("x-auth-refresh-token", newToken[1])
+      .status(200)
+      .send(`New Tokens Availble in Header, Use Those for future Reference.!`);
+
+
+    // next();
+  } catch (error) {
+
+    if (error.message == "jwt expired") {
+      var send = 'Please logout and Login Again.';
+    }
+    return res.status(400).send(`${error.message}. \n ${send}`);
+
+  }
+
+
+
+})
+
 //Create a new user
 router.post("/", auth, async (req, res) => {
 
@@ -54,7 +86,7 @@ router.post("/", auth, async (req, res) => {
 
   const token = await user.generateAuthToken();
   console.log("Token : ".token);
-  
+
   res
     .header("x-auth-access-token", token[0])
     .header("x-auth-refresh-token", token[1])
