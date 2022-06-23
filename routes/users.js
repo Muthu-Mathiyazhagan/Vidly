@@ -40,6 +40,13 @@ router.get("/", auth, async (req, res) => {
 
 //generate Auth Tokens
 router.post("/create-user-token", async (req, res) => {
+  // Need to implement below algo
+  // 1. Need to verify the Refresh Token
+  // 2. If Refresh Token Valid send new Tokens
+  // 3. If Refresh Token invalid ask user to login again
+
+  console.log("Create User Token Called ");
+
   const token = req.header("x-auth-token");
   if (!token) return res.status(401).send(`Access denied. No Token Provided`);
   try {
