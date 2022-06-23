@@ -35,18 +35,20 @@ userSchema.methods.generateAuthToken = function () {
   const accessToken = jwt.sign(
     {
       _id: this._id,
-      isAdmin: this.isAdmin
+      isAdmin: this.isAdmin,
+      type: 'access'
     },
-    process.env.vidly_jwtPrivateKey, { expiresIn: 60 }
+    process.env.vidly_jwtPrivateKey, { expiresIn: 3600 }
   );
 
 
   const refreshToken = jwt.sign(
     {
       _id: this._id,
-      isAdmin: this.isAdmin
+      isAdmin: this.isAdmin,
+      type: 'refresh'
     },
-    process.env.vidly_jwtPrivateKey, { expiresIn: 360 }
+    process.env.vidly_jwtPrivateKey, { expiresIn: 86400 }
   );
 
   return [accessToken, refreshToken];

@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const express = require("express");
@@ -28,7 +29,12 @@ router.post("/", async (req, res) => {
   //   config.get("jwtPrivateKey")
   // ); 
 
-  res.status(200).send(token);
+  return res
+  .header("x-auth-access-token", token[0])
+  .header("x-auth-refresh-token", token[1])
+  .status(200)
+  .send(_.pick(user, ["-_id", "name", "email"]));
+
 });
 
 var schema = Joi.object({

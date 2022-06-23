@@ -7,7 +7,11 @@ module.exports = (req, res, next) => {
   if (!token) return res.status(401).send(`Access denied. No Token Provided`);
   try {
     req.user = jwt.verify(token, process.env.vidly_jwtPrivateKey);
-    next();
+    if (req.user.type == 'access') {
+      next();
+    } else {
+      return res.status(403).send(`Please provide "Access" Token: Your Token type is : ${req.user.type}`);
+    }
   } catch (error) {
     if (error.message == "jwt expired") {
       var send = 'Please call "createUserToken" api to generate new Tokens';

@@ -40,6 +40,7 @@ router.get("/", auth, async (req, res) => {
 
 //Generate Auth Tokens with userId without Refresh Token
 router.get("/create-user-token-by-id", async (req, res) => {
+
   // Need to implement below algo
   // 1. Need to verify the Refresh Token
   // 2. If Refresh Token Valid send new Tokens
@@ -77,11 +78,53 @@ router.get("/create-user-token-by-id", async (req, res) => {
 
 
 //Generate Auth Tokens with Refresh Token without User Id
-router.get("/create-user-token-by-id", async (req, res) => {
+router.get("/create-user-token-by-refresh-token", async (req, res) => {
+
   // Need to implement below algo
   // 1. Need to verify the Refresh Token
   // 2. If Refresh Token Valid send new Tokens
   // 3. If Refresh Token invalid ask user to login again
+
+  console.log("Create User Token Called Using Refresh Token ");
+  let refreshToken = req.header(`x-auth-refresh-token`);
+  console.log('refresh Token : ', refreshToken);
+
+  if (!refreshToken) return res.status(401).send(`Access denied. No Token Provided`);
+  try {
+    var user = jwt.verify(refreshToken, process.env.vidly_jwtPrivateKey);
+    console.log('user Id ', user._id);
+    console.log('user type :  ', user.type);
+
+    if (user.type !== 'refresh') {
+      console.log("This is Not Refresh Token");
+      return res.status(403).send(`Please provide "Refresh" Token: Your Token type is : ${user.type}`);
+
+    }
+  } catch (error) {
+    if (error.message == "jwt expired") {
+      var send = 'Please Re-Login : Your Tokens are Expired.';
+    }
+    return res.status(400).send(`${error.message}. \n ${send}`);
+  }
+
+
+
+  user = await User.findById(user._id);
+
+  if (!user) {
+    return res.status(400).send(`User not Registered.!`);
+  }
+
+  const token = await user.generateAuthToken();
+  console.log("Token : ", token);
+
+  return res
+    .header("x-auth-access-token", token[0])
+    .header("x-auth-refresh-token", token[1])
+    .status(200)
+    .send(_.pick(user, ["_id", "name", "email"]));
+
+
 });
 
 //Create a new user
