@@ -38,42 +38,51 @@ router.get("/", auth, async (req, res) => {
   return res.status(200).send(user);
 });
 
-//generate Auth Tokens
-router.post("/create-user-token", async (req, res) => {
+//Generate Auth Tokens with userId without Refresh Token
+router.get("/create-user-token-by-id", async (req, res) => {
   // Need to implement below algo
   // 1. Need to verify the Refresh Token
   // 2. If Refresh Token Valid send new Tokens
   // 3. If Refresh Token invalid ask user to login again
 
   console.log("Create User Token Called ");
+  console.log('userId : ', req.header("User-Id"));
 
-  const token = req.header("x-auth-token");
-  if (!token) return res.status(401).send(`Access denied. No Token Provided`);
-  try {
-    req.user = jwt.verify(token, process.env.vidly_jwtPrivateKey);
 
-    const newToken = await user.generateAuthToken();
-
+  if (!mongoose.Types.ObjectId.isValid(req.header("User-Id")))
     return res
-      .header("x-auth-access-token", newToken[0])
-      .header("x-auth-refresh-token", newToken[1])
-      .status(200)
-      .send(`New Tokens Availble in Header, Use Those for future Reference.!`);
+      .status(404)
+      .send(
+        `"genreId" with value "${req.params.id}" fails to match the valid mongo id pattern`
+      );
 
 
-    // next();
-  } catch (error) {
+  let user = await User.findById(req.header("User-Id"));
+  if (!user) {
+    return res.status(400).send(`User not Registered.!`);
+  } console.log("generate auth token Called");
 
-    if (error.message == "jwt expired") {
-      var send = 'Please logout and Login Again.';
-    }
-    return res.status(400).send(`${error.message}. \n ${send}`);
+  const token = await user.generateAuthToken();
+  console.log("Token : ", token);
 
-  }
+  return res
+    .header("x-auth-access-token", token[0])
+    .header("x-auth-refresh-token", token[1])
+    .status(200)
+    .send(_.pick(user, ["_id", "name", "email"]));
 
 
 
 })
+
+
+//Generate Auth Tokens with Refresh Token without User Id
+router.get("/create-user-token-by-id", async (req, res) => {
+  // Need to implement below algo
+  // 1. Need to verify the Refresh Token
+  // 2. If Refresh Token Valid send new Tokens
+  // 3. If Refresh Token invalid ask user to login again
+});
 
 //Create a new user
 router.post("/", auth, async (req, res) => {
@@ -94,7 +103,7 @@ router.post("/", auth, async (req, res) => {
   const token = await user.generateAuthToken();
   console.log("Token : ".token);
 
-  res
+  return res
     .header("x-auth-access-token", token[0])
     .header("x-auth-refresh-token", token[1])
     .status(200)
