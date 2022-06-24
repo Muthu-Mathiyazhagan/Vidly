@@ -10,8 +10,6 @@ const admin = require("../middleware/admin");
 const asyncMiddleware = require("../middleware/async");
 const { result } = require("lodash");
 const sendEmail = require("../utils/email");
-const message = require('../roughNote');
-console.log(message);
 
 require("dotenv").config();
 
@@ -25,13 +23,6 @@ router.get(
     console.log("User", req.user);
     let user = await User.findById(req.user._id).select("name email -_id");
     console.log("user", user);
-    try {
-      await sendEmail("muthu@divum.in", "Verify Email", message);
-
-    } catch (error) {
-      console.error(error)
-
-    }
 
 
     if (!user) {
@@ -159,12 +150,67 @@ router.post("/", auth, async (req, res) => {
   const token = await user.generateAuthToken();
   console.log("Token : ".token);
 
+  const verifyToken = jwt.sign(
+    {
+      _id: this._id,
+      type: 'verify',
+      email: user.email
+    },
+    process.env.vidly_jwtPrivateKey, { expiresIn: 86400 }
+  );
+
+  let message = `http://localhost:3000/api/users/verify-email/${verifyToken}`
+
+  try {
+    await sendEmail(user.email, "Verify Email", message);
+
+  } catch (error) {
+    console.error(error)
+
+  }
+
   return res
     .header("x-auth-access-token", token[0])
     .header("x-auth-refresh-token", token[1])
     .status(200)
     .send(_.pick(user, ["_id", "name", "email"]));
 });
+
+//  verify User's Email 
+router.get("/verify-email/:token", async (req, res) => {
+  let token = req.params.token;
+
+  if (!token) return res.status(401).send(`Access denied. No Token Provided`);
+  try {
+    let user = jwt.verify(token, process.env.vidly_jwtPrivateKey);
+    console.log(user, " User");
+    if (user.type == 'verify') {
+
+      user = await User.findOne({ email: user.email });
+      console.log("User From DB : ", user);
+      if (!user) return res.status(400).send("Invalid link");
+
+      await User.updateOne({ _id: user._id }, { isVerified: true });
+      return res.status(201).send(`User Email ID Verified Successfully`);
+
+
+
+      // Check the Id with DB
+      // Change the Status To True for isVerify
+
+    } else {
+      return res.status(403).send(`Please provide "verify" Token: Your Token type is : ${req.user.type}`);
+    }
+  } catch (error) {
+    if (error.message == "jwt expired") {
+      var send = 'Please call "createUserToken" api to generate new Tokens';
+
+    }
+    return res.status(400).send(`${error.message}. \n ${send}`);
+
+  }
+
+})
 
 
 // Delete a user

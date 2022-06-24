@@ -49,11 +49,11 @@ userSchema.methods.generateAuthToken = function () {
   const refreshToken = jwt.sign(
     {
       _id: this._id,
-      isAdmin: this.isAdmin,
       type: 'refresh'
     },
     process.env.vidly_jwtPrivateKey, { expiresIn: 86400 }
   );
+
 
   return [accessToken, refreshToken];
 };
