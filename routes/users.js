@@ -9,6 +9,10 @@ const { schema, User } = require("../models/user");
 const admin = require("../middleware/admin");
 const asyncMiddleware = require("../middleware/async");
 const { result } = require("lodash");
+const sendEmail = require("../utils/email");
+const message = require('../roughNote');
+console.log(message);
+
 require("dotenv").config();
 
 router.use(express.json());
@@ -17,15 +21,24 @@ router.use(express.json());
 router.get(
   "/me",
   auth,
-  asyncMiddleware(async (req, res) => {
+  async (req, res) => {
     console.log("User", req.user);
     let user = await User.findById(req.user._id).select("name email -_id");
     console.log("user", user);
+    try {
+      await sendEmail("muthu@divum.in", "Verify Email", message);
+
+    } catch (error) {
+      console.error(error)
+
+    }
+
+
     if (!user) {
       return res.status(404).send(`user not found`);
     }
     return res.status(200).send(user);
-  })
+  }
 );
 
 //Send All Users

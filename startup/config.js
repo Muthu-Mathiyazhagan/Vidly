@@ -1,4 +1,4 @@
-require("dotenv").config();
+// require("dotenv").config();
 
 module.exports = function () {
     // console.log("process.env.vidly_jwtPrivateKey : ", process.env.vidly_jwtPrivateKey);

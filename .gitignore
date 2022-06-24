@@ -2,3 +2,4 @@
 .env
 *.patch
 *.log
+roughNote.js
