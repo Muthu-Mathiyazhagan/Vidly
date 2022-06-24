@@ -159,7 +159,7 @@ router.post("/", auth, async (req, res) => {
     process.env.vidly_jwtPrivateKey, { expiresIn: 86400 }
   );
 
-  let message = `<a href='http://${process.env.hosturl}:3000/api/users/verify-email/${verifyToken}' > Click Here To Verify your Mail </a>`
+  let message = `http://${process.env.hosturl}:3000/api/users/verify-email/${verifyToken}`
 
   try {
     await sendEmail(user.email, "Verify Email", message);
