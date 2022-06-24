@@ -159,7 +159,7 @@ router.post("/", auth, async (req, res) => {
     process.env.vidly_jwtPrivateKey, { expiresIn: 86400 }
   );
 
-  let message = `http://localhost:3000/api/users/verify-email/${verifyToken}`
+  let message = `<a href='http://${process.env.hosturl}:3000/api/users/verify-email/${verifyToken}' > Click Here To Verify your Mail </a>`
 
   try {
     await sendEmail(user.email, "Verify Email", message);
@@ -193,10 +193,6 @@ router.get("/verify-email/:token", async (req, res) => {
       await User.updateOne({ _id: user._id }, { isVerified: true });
       return res.status(201).send(`User Email ID Verified Successfully`);
 
-
-
-      // Check the Id with DB
-      // Change the Status To True for isVerify
 
     } else {
       return res.status(403).send(`Please provide "verify" Token: Your Token type is : ${req.user.type}`);
