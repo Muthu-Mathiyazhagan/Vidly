@@ -3,3 +3,6 @@
 *.patch
 *.log
 roughNote.js
+roughNote.json
+users.json
+users.csv
