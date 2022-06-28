@@ -11,6 +11,7 @@ module.exports = function () {
                 "Mongo DB Conection Status : ",
                 DbStatus[mongoose.connection.readyState]
             );
+            console.log(new Date().toLocaleString("ta-IN"));
         })
 
 }

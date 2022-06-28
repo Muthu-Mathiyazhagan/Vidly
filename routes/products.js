@@ -103,6 +103,51 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.all('/presignedurl', async (req, res) => {
+
+    console.log(req.body.fileName);
+    console.log(req.body.expires);
+
+    Aws.config.update({
+        region: process.env.AWS_REGION,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    });
+    const s3Params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: req.body.fileName,
+        Expires: req.body.expires,
+    };
+
+
+    await getPresignUrl(s3, s3Params,res);
+    /*
+        await getPresignUrl(s3, s3Params).then((result) => {
+            console.log(`result : ${result}`);
+            if (result) return res.status(200).send(`result : ${result}`);
+            return res.status(404).send(`result : ${result}`)
+        }).catch((ex) => {
+            return res.status(400).send(`EXception : ${ex}`)
+    
+        })
+        */
+
+});
+async function getPresignUrl(s3, s3Params,res) {
+    console.log("getPresignUrlcalled.!");
+    try {
+        await s3.getSignedUrl('getObject', s3Params, function (err, data) {
+            console.log("getSignedUrl called.!");
+
+            if (err) return res.status(404).send(`err : ${err}`);
+            return res.status(200).send(`Data : ${data}`);
+        });
+    } catch (error) {
+        return res.status(404).send(`err : ${error}`);
+    }
+
+}
+
 
 
 module.exports = router;
