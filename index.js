@@ -1,6 +1,12 @@
 const express = require("express");
 const app = express();
 const winston = require('winston');
+require("dotenv").config();
+
+
+
+console.log("process.env.vidly_jwtPrivateKey : ", process.env.vidly_jwtPrivateKey);
+
 
 require('./startup/routes')(app);
 require('./startup/dbConnect')();

@@ -42,6 +42,7 @@ const s3 = new Aws.S3({
 
 // now how to handle the post request and to upload photo (upload photo using the key defined below in upload.single ie: productimage )
 router.post('/', upload.single('productimage'), async (req, res) => {
+    
     console.log("post called.!");
     console.log(`req.file : ${req.file}`)  // to check the data in the console that is being uploaded
 
