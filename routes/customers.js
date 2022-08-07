@@ -9,7 +9,7 @@ router.use(express.json());
 // Create
 router.post("/", auth, async (req, res) => {
   const { error } = schema.validate(req.body);
-  if (error) return res.status(404).send(error.details[0].message);
+  if (error) return res.status(400).send(error.details[0].message);
 
   let customer = await Customer.findOne({ phone: req.body.phone });
   if (customer)
@@ -36,7 +36,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res
-      .status(404)
+      .status(400)
       .send(
         `"customerId" with value "${req.params.id}" fails to match the valid mongo id pattern`
       );
@@ -54,7 +54,7 @@ router.get("/:id", async (req, res) => {
 
 router.put("/:id", auth, async (req, res) => {
   const { error } = schema.validate(req.body);
-  if (error) return res.status(404).send(error.details[0].message);
+  if (error) return res.status(400).send(error.details[0].message);
 
   // Below logic does not work . May be need to handle this error in Express.Router Level; (I Guess :)  ;
   // if (req.params.id == "") {
@@ -63,7 +63,7 @@ router.put("/:id", auth, async (req, res) => {
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res
-      .status(404)
+      .status(400)
       .send(
         `"customerId" with value "${req.params.id}" fails to match the valid mongo id pattern`
       );
@@ -86,7 +86,7 @@ router.put("/:id", auth, async (req, res) => {
 router.delete("/:id", auth, async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res
-      .status(404)
+      .status(400)
       .send(
         `"customerId" with value "${req.params.id}" fails to match the valid mongo id pattern`
       );
@@ -100,7 +100,7 @@ router.delete("/:id", auth, async (req, res) => {
       .send(`The Given Id (${req.params.id}) was not Found.!`);
 
   res
-    .status(200)
+    .status(202)
     .send(
       `The given id(${req.params.id}) has deleted Successfully \n genre : ${customer}`
     );

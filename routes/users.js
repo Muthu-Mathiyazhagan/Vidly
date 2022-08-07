@@ -56,7 +56,7 @@ router.get("/create-user-token-by-id", async (req, res) => {
 
   if (!mongoose.Types.ObjectId.isValid(req.header("User-Id")))
     return res
-      .status(404)
+      .status(400)
       .send(
         `"genreId" with value "${req.params.id}" fails to match the valid mongo id pattern`
       );

@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
 router.post("/",auth, async (req, res) => {
   console.log(req.body);
   const { error } = schema.validate(req.body);
-  if (error) return res.status(404).send(error.details[0].message);
+  if (error) return res.status(400).send(error.details[0].message);
 
   const customer = await Customer.findById(req.body.customerId);
   if (!customer) return res.status(404).send(`Invalid customer`);
@@ -74,7 +74,7 @@ router.post("/",auth, async (req, res) => {
 router.get("/:id", async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res
-      .status(404)
+      .status(400)
       .send(
         `"rentalId" with value "${req.params.id}" fails to match the valid mongo id pattern`
       );
@@ -94,7 +94,7 @@ router.get("/:id", async (req, res) => {
 router.delete("/:id",auth, async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res
-      .status(404)
+      .status(400)
       .send(
         `"rentalId" with value "${req.params.id}" fails to match the valid mongo id pattern`
       );
@@ -108,7 +108,7 @@ router.delete("/:id",auth, async (req, res) => {
       .send(`The Given Id (${req.params.id}) was not Found.!`);
 
   res
-    .status(200)
+    .status(202)
     .send(
       `The Rental id : (${rental._id}) has deleted Successfully \n Deleted Rental : ${rental}`
     );
@@ -119,7 +119,7 @@ router.delete("/:id",auth, async (req, res) => {
 router.put("/:id",[auth,admin], async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res
-      .status(404)
+      .status(400)
       .send(
         `"rentalId" with value "${req.params.id}" fails to match the valid mongo id pattern`
       );
@@ -131,7 +131,7 @@ router.put("/:id",[auth,admin], async (req, res) => {
 
   console.log("Req", req.body);
   const { error } = schema.validate(req.body);
-  if (error) return res.status(404).send(error.details[0].message);
+  if (error) return res.status(400).send(error.details[0].message);
 
   const customer = await Customer.findById(req.body.customerId);
   if (!customer) return res.status(404).send(`Invalid customer`);

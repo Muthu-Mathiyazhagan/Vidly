@@ -19,7 +19,7 @@ router.post("/", auth, async (req, res, next) => {
 
   console.log(req.body);
   const { error } = schema.validate(req.body);
-  if (error) return res.status(404).send(error.details[0].message);
+  if (error) return res.status(400).send(error.details[0].message);
 
   if (await Genre.findOne({ name: req.body.name })) {
     return res.status(409).send("Conflict : Genre Name already Exist.!");
@@ -40,7 +40,7 @@ router.get("/:id",auth, async (req, res) => {
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res
-      .status(404)
+      .status(400)
       .send(
         `"genreId" with value "${req.params.id}" fails to match the valid mongo id pattern`
       );
@@ -61,11 +61,11 @@ router.get("/:id",auth, async (req, res) => {
 router.put("/:id", auth, async (req, res) => {
 
   const { error } = schema.validate(req.body);
-  if (error) return res.status(404).send(error.details[0].message);
+  if (error) return res.status(400).send(error.details[0].message);
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res
-      .status(404)
+      .status(400)
       .send(
         `"genreId" with value "${req.params.id}" fails to match the valid mongo id pattern`
       );
@@ -88,7 +88,7 @@ router.put("/:id", auth, async (req, res) => {
 router.delete("/:id", [auth, admin], async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res
-      .status(404)
+      .status(400)
       .send(
         `"genreId" with value "${req.params.id}" fails to match the valid mongo id pattern`
       );
