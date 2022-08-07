@@ -5,11 +5,10 @@ const { schema, Genre } = require("../models/genre");
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const { result } = require("lodash");
 router.use(express.json());
 
 //   Read All
-router.get("/", async (req, res) => {
+router.get("/",auth, async (req, res) => {
   // throw new Error("Could not get Genres at the moment,!");
   const genres = await Genre.find().sort("name").select({ __v: false });
   return res.status(200).send(genres);
@@ -37,7 +36,7 @@ router.post("/", auth, async (req, res, next) => {
 
 //Read Particular
 
-router.get("/:id", async (req, res) => {
+router.get("/:id",auth, async (req, res) => {
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res
