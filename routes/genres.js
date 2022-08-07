@@ -5,7 +5,6 @@ const { schema, Genre } = require("../models/genre");
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const winston = require("winston");
 const { result } = require("lodash");
 router.use(express.json());
 

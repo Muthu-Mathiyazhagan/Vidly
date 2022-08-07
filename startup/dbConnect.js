@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const winston = require('winston');
 const DbStatus = ["Disconnected", "Connected", "connecting", "disconnecting"];
 require("dotenv").config();
 
@@ -12,7 +11,7 @@ module.exports = function () {
     mongoose
         .connect(process.env.dbUri, { useNewUrlParser: true, useUnifiedTopology: true })
         .then(() => {
-            winston.info(
+            console.log(
                 "Mongo DB Conection Status : ",
                 DbStatus[mongoose.connection.readyState]
             );
