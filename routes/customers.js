@@ -17,7 +17,7 @@ router.post("/", auth, async (req, res) => {
       .status(409)
       .send(`User Already Registered.! "${customer.phone}"`);
 
-  res.status(200).send(
+  res.status(201).send(
     await new Customer({
       name: req.body.name,
       isGold: req.body.isGold,

@@ -172,7 +172,7 @@ router.post("/", auth, async (req, res) => {
   return res
     .header("x-auth-access-token", token[0])
     .header("x-auth-refresh-token", token[1])
-    .status(200)
+    .status(201)
     .send(_.pick(user, ["_id", "name", "email"]));
 });
 
