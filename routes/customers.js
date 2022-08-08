@@ -9,7 +9,7 @@ router.use(express.json());
 // Create
 router.post("/", auth, async (req, res) => {
   const { error } = schema.validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).send(error);
 
   let customer = await Customer.findOne({ phone: req.body.phone });
   if (customer)
@@ -32,7 +32,6 @@ router.get("/", async (req, res) => {
 });
 
 //Read Particular
-
 router.get("/:id", async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res
@@ -51,7 +50,6 @@ router.get("/:id", async (req, res) => {
 });
 
 //Update
-
 router.put("/:id", auth, async (req, res) => {
   const { error } = schema.validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
