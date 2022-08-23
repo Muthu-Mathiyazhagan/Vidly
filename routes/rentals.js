@@ -67,7 +67,7 @@ router.post("/",auth, async (req, res) => {
   //     res.status(500).send("Something went wrong");
   //   }
 
-  res.status(200).send(rental);
+  res.status(201).send(rental);
 });
 
 //Read Particular

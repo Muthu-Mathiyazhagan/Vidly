@@ -41,7 +41,7 @@ router.post('/', auth, async (req, res) => {
     dailyRentalRate: req.body.dailyRentalRate
   }).save()
 
-  res.status(200).send(movie)
+  res.status(201).send(movie)
 })
 
 //   Read All
